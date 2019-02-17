@@ -1,0 +1,17 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+stages:
+  - build
+
+jobs:
+  include:
+    - stage: build
+      install:
+        - chmod +x build.sh
+        - docker pull cxjava/wndr4300
+        - docker run -t -v $(pwd)/build.sh:/opt/lede/build.sh -e GITHUB_TOKEN=$GITHUB_TOKEN cxjava/wndr4300
+      script:
+        - echo "backend build succeeded"

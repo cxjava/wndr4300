@@ -22,7 +22,7 @@ ls -al
 make defconfig
 ls -al
 
-make -j1
+make -j1 V=s
 
 du -h ${OUT_DIR}
 pwd

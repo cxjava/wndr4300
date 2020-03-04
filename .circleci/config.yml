@@ -18,7 +18,7 @@ jobs:
             useradd -m admin \
             && echo admin:admin | chpasswd \
             && cd /home/admin \
-            && ls -Slh . \
+            && ls -Slh .
             pwd
             sudo su - admin
             cd ~

@@ -43,7 +43,7 @@ jobs:
             echo '列出清除后下载目录所有文件，从大到小'
             ls -Slh ./dl
       - run:
-          name: 开启128MFlash
+          name: 开启128M Flash patch
           working_directory: /opt/lede
           command: sed -i  s/'23552k(ubi),25600k@0x6c0000(firmware)'/'120832k(ubi),122880k@0x6c0000(firmware)'/ target/linux/ar71xx/image/legacy.mk
       - run:

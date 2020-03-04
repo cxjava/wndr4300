@@ -10,7 +10,7 @@ jobs:
     steps:
       - run:
           name: 更新并安装依赖软件
-          command: apt-get update && apt-get install -y --no-install-recommends ca-certificates asciidoc autoconf automake autopoint binutils build-essential bzip2 curl device-tree-compiler flex g++-multilib gawk gcc-multilib gettext git lib32gcc1 libc6-dev-i386 libelf-dev libglib2.0-dev libncurses5-dev libssl-dev libtool zlib1g-dev msmtp p7zip p7zip-full patch python3.6 qemu-utils subversion texinfo tree node-uglify unzip upx-ucl wget xmlto zlib1g-dev
+          command: apt-get update && apt-get install -y --no-install-recommends sudo ca-certificates asciidoc autoconf automake autopoint binutils build-essential bzip2 curl device-tree-compiler flex g++-multilib gawk gcc-multilib gettext git lib32gcc1 libc6-dev-i386 libelf-dev libglib2.0-dev libncurses5-dev libssl-dev libtool zlib1g-dev msmtp p7zip p7zip-full patch python3.6 qemu-utils subversion texinfo tree node-uglify unzip upx-ucl wget xmlto zlib1g-dev
       - run:
           name: 克隆仓库
           working_directory: /opt
@@ -64,8 +64,8 @@ jobs:
           working_directory: /home/admin/lede
           command: |
             chown -R admin:admin /home/admin
-            su - admin
-            make -j1 V=s |tee build.log |egrep -i '(warn|error|make\[)'            
+            ls -Slh .
+            sudo -u admin make -j1 V=s |tee build.log |egrep -i '(warn|error|make\[)'            
       - run:
           name: Upload Failed Log
           working_directory: /home/admin/lede

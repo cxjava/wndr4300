@@ -10,7 +10,7 @@ jobs:
     steps:
       - run:
           name: 更新并安装依赖软件
-          command: apt-get update && apt-get install -y --no-install-recommends asciidoc autoconf automake autopoint binutils build-essential bzip2 curl device-tree-compiler flex g++-multilib gawk gcc-multilib gettext git git-core lib32gcc1 libc6-dev-i386 libelf-dev libglib2.0-dev libncurses5-dev libssl-dev libtool libz-dev linux-libc-dev:i386 msmtp p7zip p7zip-full patch python3.5 qemu-utils subversion texinfo tree uglifyjs unzip upx wget xmlto zlib1g-dev
+          command: apt-get update && apt-get install -y --no-install-recommends asciidoc autoconf automake autopoint binutils build-essential bzip2 curl device-tree-compiler flex g++-multilib gawk gcc-multilib gettext git lib32gcc1 libc6-dev-i386 libelf-dev libglib2.0-dev libncurses5-dev libssl-dev libtool zlib1g-dev msmtp p7zip p7zip-full patch libpython3.5-minimal qemu-utils subversion texinfo tree node-uglify unzip upx-ucl wget xmlto zlib1g-dev
       - run:
           name: 克隆仓库
           working_directory: /opt

@@ -27,6 +27,7 @@ jobs:
             pwd
             git clone https://github.com/coolsnowwolf/lede
             chown -R admin:admin /home/admin
+            ls -Slh .
       - run:
           name: 更新feeds
           working_directory: /home/admin/lede
@@ -41,6 +42,7 @@ jobs:
           command: |
             wget -O ./.config $config_url
             cat ./.config
+            ls -Slh .
       - run:
           name: 提前下载依赖包
           working_directory: /home/admin/lede

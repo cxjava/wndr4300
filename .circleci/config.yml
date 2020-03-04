@@ -48,7 +48,7 @@ jobs:
           name: 编译
           working_directory: /opt/lede
           command: |
-            make -j1 |tee build.log |egrep -i '(warn|error|make\[)'            
+            make -j1 V=s |tee build.log |egrep -i '(warn|error|make\[)'            
       - run:
           name: Upload Failed Log
           working_directory: /opt/lede

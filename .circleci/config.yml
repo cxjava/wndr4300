@@ -15,9 +15,12 @@ jobs:
           name: 克隆仓库
           working_directory: /opt
           command: |
-            useradd -m admin
-            echo admin:admin | chpasswd
-            echo 'admin ALL=NOPASSWD: ALL' > /etc/sudoers.d/admin
+            useradd -m admin \
+            && echo admin:admin | chpasswd \
+            && echo 'admin ALL=NOPASSWD: ALL' > /etc/sudoers.d/admin \
+            && cd /home/admin \
+            && ls -Slh . \
+            pwd
             sudo su - admin
             cd ~
             pwd

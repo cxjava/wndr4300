@@ -3,7 +3,6 @@ jobs:
   build:
     docker:
       - image: ubuntu:bionic
-        user: admin
         environment:
           config_url: https://raw.githubusercontent.com/cxjava/wndr4300/master/.config
     parallelism: 1
@@ -14,25 +13,35 @@ jobs:
           command: apt-get update && apt-get install -y --no-install-recommends ca-certificates asciidoc autoconf automake autopoint binutils build-essential bzip2 curl device-tree-compiler flex g++-multilib gawk gcc-multilib gettext git lib32gcc1 libc6-dev-i386 libelf-dev libglib2.0-dev libncurses5-dev libssl-dev libtool zlib1g-dev msmtp p7zip p7zip-full patch python3.6 qemu-utils subversion texinfo tree node-uglify unzip upx-ucl wget xmlto zlib1g-dev
       - run:
           name: 克隆仓库
-          working_directory: /home/admin
-          command: git clone --depth=1 https://github.com/coolsnowwolf/lede
+          working_directory: /opt
+          command: |
+            useradd -m admin
+            echo admin:admin | chpasswd
+            echo 'admin ALL=NOPASSWD: ALL' > /etc/sudoers.d/admin
+            sudo su - admin
+            cd ~
+            pwd
+            cd /home/admin
+            pwd
+            git clone https://github.com/coolsnowwolf/lede
+            chown -R admin:admin /home/admin
       - run:
           name: 更新feeds
-          working_directory: /opt/lede
+          working_directory: /home/admin/lede
           command: ./scripts/feeds update -a
       - run:
           name: 安装feeds
-          working_directory: /opt/lede
+          working_directory: /home/admin/lede
           command: ./scripts/feeds install -a
       - run:
           name: 下载config文件
-          working_directory: /opt/lede
+          working_directory: /home/admin/lede
           command: |
             wget -O ./.config $config_url
             cat ./.config
       - run:
           name: 提前下载依赖包
-          working_directory: /opt/lede
+          working_directory: /home/admin/lede
           command: |
             make download
             echo '列出下载目录的所有文件'
@@ -43,20 +52,20 @@ jobs:
             ls -Slh ./dl
       - run:
           name: 开启128M Flash patch
-          working_directory: /opt/lede
+          working_directory: /home/admin/lede
           command: sed -i  s/'23552k(ubi),25600k@0x6c0000(firmware)'/'120832k(ubi),122880k@0x6c0000(firmware)'/ target/linux/ar71xx/image/legacy.mk
       - run:
           name: 编译
-          working_directory: /opt/lede
+          working_directory: /home/admin/lede
           command: |
             make -j1 V=s |tee build.log |egrep -i '(warn|error|make\[)'            
       - run:
           name: Upload Failed Log
-          working_directory: /opt/lede
+          working_directory: /home/admin/lede
           command: tail -n 500 build.log
           when: on_fail
       - store_artifacts:
-          path: /opt/lede/bin/targets
+          path: /home/admin/lede/bin/targets
 workflows:
   version: 2.1
   build-workflow:

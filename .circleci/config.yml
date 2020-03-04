@@ -27,8 +27,6 @@ jobs:
           name: 下载config文件
           working_directory: /opt/lede
           command: |
-            rm ./.config
-            rm ./.config.old
             wget -O ./.config $config_url
             cat ./.config
       - run:

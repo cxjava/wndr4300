@@ -1,0 +1,62 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: ubuntu:bionic
+        environment:
+          config_url: https://raw.githubusercontent.com/cxjava/wndr4300/master/.config
+    parallelism: 1
+    working_directory: /opt
+    steps:
+      - run:
+          name: 更新并安装依赖软件
+          command: apt-get update && apt-get install -y --no-install-recommends asciidoc autoconf automake autopoint binutils build-essential bzip2 curl device-tree-compiler flex g++-multilib gawk gcc-multilib gettext git git-core lib32gcc1 libc6-dev-i386 libelf-dev libglib2.0-dev libncurses5-dev libssl-dev libtool libz-dev linux-libc-dev:i386 msmtp p7zip p7zip-full patch python3.5 qemu-utils subversion texinfo tree uglifyjs unzip upx wget xmlto zlib1g-dev
+      - run:
+          name: 克隆仓库
+          working_directory: /opt
+          command: git clone --depth=1 https://github.com/coolsnowwolf/lede
+      - run:
+          name: 更新feeds
+          working_directory: /opt/lede
+          command: ./scripts/feeds update -a
+      - run:
+          name: 安装feeds
+          working_directory: /opt/lede
+          command: ./scripts/feeds install -a
+      - run:
+          name: 下载config文件
+          working_directory: /opt/lede
+          command: |
+            rm ./.config
+            rm ./.config.old
+            wget -O ./.config $config_url
+            cat ./.config
+      - run:
+          name: 提前下载依赖包
+          working_directory: /opt/lede
+          command: |
+            make download
+            echo '列出下载目录的所有文件'
+            ls -Slh ./dl
+            echo '删除大小异常的依赖，通常是未下载成功的依赖包。删除大小小于2k的文件'
+            find ./dl/ -type f -size -2k -exec rm {} +
+            echo '列出清除后下载目录所有文件，从大到小'
+            ls -Slh ./dl
+      - run:
+          name: 开启128MFlash
+          working_directory: /opt/lede
+          command: sed -i  s/'23552k(ubi),25600k@0x6c0000(firmware)'/'120832k(ubi),122880k@0x6c0000(firmware)'/ target/linux/ar71xx/image/legacy.mk
+      - run:
+          name: 编译
+          working_directory: /opt/lede
+          command: |
+            make -j1 |tee build.log |egrep -i '(warn|error|make\[)'
+            echo '显示最后500行，如果出错，可以看见错误消息'
+            tail -n 500 build.log
+      - store_artifacts:
+          path: /opt/lede/bin/targets
+workflows:
+  version: 2.1
+  build-workflow:
+    jobs:
+      - build

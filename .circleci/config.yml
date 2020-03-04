@@ -26,6 +26,7 @@ jobs:
             cd /home/admin
             pwd
             git clone https://github.com/coolsnowwolf/lede
+            ls -Slh .
             chown -R admin:admin /home/admin
             ls -Slh .
       - run:
@@ -62,6 +63,8 @@ jobs:
           name: 编译
           working_directory: /home/admin/lede
           command: |
+            chown -R admin:admin /home/admin
+            su - admin
             make -j1 V=s |tee build.log |egrep -i '(warn|error|make\[)'            
       - run:
           name: Upload Failed Log

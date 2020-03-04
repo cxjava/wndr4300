@@ -3,6 +3,7 @@ jobs:
   build:
     docker:
       - image: ubuntu:bionic
+        user: admin
         environment:
           config_url: https://raw.githubusercontent.com/cxjava/wndr4300/master/.config
     parallelism: 1
@@ -13,7 +14,7 @@ jobs:
           command: apt-get update && apt-get install -y --no-install-recommends ca-certificates asciidoc autoconf automake autopoint binutils build-essential bzip2 curl device-tree-compiler flex g++-multilib gawk gcc-multilib gettext git lib32gcc1 libc6-dev-i386 libelf-dev libglib2.0-dev libncurses5-dev libssl-dev libtool zlib1g-dev msmtp p7zip p7zip-full patch python3.6 qemu-utils subversion texinfo tree node-uglify unzip upx-ucl wget xmlto zlib1g-dev
       - run:
           name: 克隆仓库
-          working_directory: /opt
+          working_directory: /home/admin
           command: git clone --depth=1 https://github.com/coolsnowwolf/lede
       - run:
           name: 更新feeds

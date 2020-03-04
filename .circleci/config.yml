@@ -20,7 +20,7 @@ jobs:
             && cd /home/admin \
             && ls -Slh .
             pwd
-            sudo su - admin
+            su - admin
             cd ~
             pwd
             cd /home/admin

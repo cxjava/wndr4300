@@ -48,9 +48,12 @@ jobs:
           name: 编译
           working_directory: /opt/lede
           command: |
-            make -j1 |tee build.log |egrep -i '(warn|error|make\[)'
-            echo '显示最后500行，如果出错，可以看见错误消息'
-            tail -n 500 build.log
+            make -j1 |tee build.log |egrep -i '(warn|error|make\[)'            
+      - run:
+          name: Upload Failed Log
+          working_directory: /opt/lede
+          command: tail -n 500 build.log
+          when: on_fail
       - store_artifacts:
           path: /opt/lede/bin/targets
 workflows:

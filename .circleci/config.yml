@@ -56,6 +56,7 @@ jobs:
           command: |
             chown -R admin:admin /home/admin
             ls -Slh .
+            echo -e "$(nproc) thread compile"
             sudo -u admin make -j$(nproc) || make -j1 V=s |tee build.log |egrep -i '(warn|error|make\[)'
       - run:
           name: Upload Failed Log

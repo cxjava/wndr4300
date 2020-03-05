@@ -17,6 +17,7 @@ jobs:
           command: |
             useradd -m admin
             echo admin:admin | chpasswd
+            cd /home/admin
             git clone https://github.com/coolsnowwolf/lede
       - run:
           name: 更新feeds

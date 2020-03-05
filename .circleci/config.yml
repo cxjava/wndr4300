@@ -15,20 +15,9 @@ jobs:
           name: 克隆仓库
           working_directory: /opt
           command: |
-            useradd -m admin \
-            && echo admin:admin | chpasswd \
-            && cd /home/admin \
-            && ls -Slh .
-            pwd
-            su - admin
-            cd ~
-            pwd
-            cd /home/admin
-            pwd
+            useradd -m admin
+            echo admin:admin | chpasswd
             git clone https://github.com/coolsnowwolf/lede
-            ls -Slh .
-            chown -R admin:admin /home/admin
-            ls -Slh .
       - run:
           name: 更新feeds
           working_directory: /home/admin/lede
@@ -42,13 +31,14 @@ jobs:
           working_directory: /home/admin/lede
           command: |
             wget -O ./.config $config_url
+            sed -i 's/^[ \t]*//g' ./.config
+            make defconfig
             cat ./.config
-            ls -Slh .
       - run:
           name: 提前下载依赖包
           working_directory: /home/admin/lede
           command: |
-            make download
+            make download -j8
             echo '列出下载目录的所有文件'
             ls -Slh ./dl
             echo '删除大小异常的依赖，通常是未下载成功的依赖包。删除大小小于2k的文件'
@@ -65,12 +55,16 @@ jobs:
           command: |
             chown -R admin:admin /home/admin
             ls -Slh .
-            sudo -u admin make -j1 V=s |tee build.log |egrep -i '(warn|error|make\[)'            
+            sudo -u admin make -j$(nproc) || make -j1 V=s |tee build.log |egrep -i '(warn|error|make\[)'
       - run:
           name: Upload Failed Log
           working_directory: /home/admin/lede
           command: tail -n 500 build.log
           when: on_fail
+      - run:
+          name: 删除Packages
+          working_directory: /home/admin/lede
+          command: find ./bin/targets/ -type d -name "packages" | xargs rm -rf {}
       - store_artifacts:
           path: /home/admin/lede/bin/targets
 workflows:
